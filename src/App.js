@@ -1,24 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+
+import Title from "./Components/Title";
+import Inputs from "./Components/inputs";
+import Timer from "./Components/Timer";
+import TimeControl from "./Components/TimeControl";
+import Footer from "./Components/Footer";
+
+import { Container } from "@mui/system";
+import { Box, createTheme, Paper, ThemeProvider } from "@mui/material";
+
+const darkTheme = createTheme({
+  palette: {
+    mode: "dark",
+  },
+});
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Container maxWidth="sm">
+      <Box sx={{display: "flex", flexDirection: "column", justifyContent: "space-around", minHeight: "100vh" }}>
+        <Title />
+        <ThemeProvider theme={darkTheme}>
+          <Paper elevation={8}>
+            <Inputs />
+            <Timer />
+            <TimeControl />
+          </Paper>
+            <Footer/>
+        </ThemeProvider>
+      </Box>
+    </Container>
   );
 }
 
