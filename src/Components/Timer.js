@@ -2,7 +2,7 @@ import React from "react";
 
 import { Box, Typography } from "@mui/material";
 
-const Timer = () => {
+const Timer = (props) => {
   return (
     <Box
       sx={{
@@ -15,11 +15,11 @@ const Timer = () => {
         height: "250px",
         marginY: "5px",
       }}>
-      <Typography variant="h4" align="center">
+      <Typography id="timer-label" variant="h4" align="center">
         Session
       </Typography>
-      <Typography variant="h3" align="center">
-        24:00
+      <Typography id="time-left" variant="h3" align="center">
+        {props.timeLeft}
       </Typography>
     </Box>
   );
