@@ -76,7 +76,7 @@ function App() {
     let countDownDate = new Date()
 
     //set the date we're counting to 
-    countDownDate.setTime(oldDate.getTime() + (minutes * 60 * 1000))
+    countDownDate.setTime(oldDate.getTime() + (minutes * 60 * 1000 + 1000))
 
     //update the count down every 1 sec
 
@@ -99,7 +99,7 @@ function App() {
         console.log("beeep")
       }
       console.log(min, sec)
-    }, 30);
+    }, 1000);
   };
 
   return (
