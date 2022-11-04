@@ -10,7 +10,7 @@ const Title = () => {
           variant="h1"
           align="center"
           color="#f5f5f5"
-          sx={{ fontSize: "2.6rem" }}>
+          sx={{ fontSize: "2.6rem"}}>
           Pomodoro Clock
         </Typography>
       </header>

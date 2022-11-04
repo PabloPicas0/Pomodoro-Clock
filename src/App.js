@@ -20,36 +20,87 @@ const darkTheme = createTheme({
 function App() {
   const [breakLength, setBreakLength] = useState(5);
   const [sessionLength, setSessionLength] = useState(25);
-  const [timeLeft, setTimeLeft] = useState("25:00");
+  const [minutes, setMinutes] = useState(25);
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [timerOn, setTimerOn] = useState(false);
 
   const handleReset = () => {
     const audio = document.getElementById("beep");
     setBreakLength(5);
     setSessionLength(25);
-    setTimeLeft("25:00");
+    setMinutes(25);
+    setTimeLeft(0);
     audio.pause();
   };
 
   const handleBreakIncrement = () => {
+    if (breakLength >= 60) {
+      return;
+    }
     setBreakLength((prev) => prev + 1);
   };
 
   const handleBreakDecrement = () => {
-    if (breakLength === 1 || breakLength === 60) {
+    if (breakLength <= 1) {
       return;
     }
     setBreakLength((prev) => prev - 1);
   };
 
   const handleSessionIncrement = () => {
-    setSessionLength(prev => prev + 1)
-  }
-  const handleSessionDecrement = () => {
-    if(sessionLength === 1 || sessionLength === 60) {
-      return
+    if (sessionLength >= 60) {
+      return;
     }
-    setSessionLength(prev => prev - 1)
-  }
+    setSessionLength((prev) => {
+      setMinutes(prev + 1);
+      return prev + 1;
+    });
+  };
+
+  const handleSessionDecrement = () => {
+    if (sessionLength <= 1) {
+      return;
+    }
+    setSessionLength((prev) => {
+      setMinutes(prev - 1);
+      return prev - 1;
+    });
+  };
+
+  // const handleStartStop = () => {
+  //   setTimerOn(!timerOn);
+  // };
+
+  const handleTimer = () => {
+    let oldDate = new Date()
+    let countDownDate = new Date()
+
+    //set the date we're counting to 
+    countDownDate.setTime(oldDate.getTime() + (minutes * 60 * 1000))
+
+    //update the count down every 1 sec
+
+    let counter = setInterval(() => {
+      //get today date
+      let now = new Date().getTime()
+
+      //find distance between future date and now
+      let distance = countDownDate - now
+
+      //time calculations for min and sec
+      let min = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
+      let sec = Math.floor((distance % (1000 * 60)) / 1000)
+
+      setMinutes(min)
+      setTimeLeft(sec)
+
+      if(distance <= 0) {
+        clearInterval(counter)
+        console.log("beeep")
+      }
+      console.log(min, sec)
+    }, 30);
+  };
 
   return (
     <Container maxWidth="sm">
@@ -57,7 +108,7 @@ function App() {
         sx={{
           display: "flex",
           flexDirection: "column",
-          justifyContent: "space-around",
+          justifyContent: "space-between",
           minHeight: "100vh",
         }}>
         <Title />
@@ -72,8 +123,13 @@ function App() {
               handleSessionIncrement={handleSessionIncrement}
               handleSessionDecrement={handleSessionDecrement}
             />
-            <Timer timeLeft={timeLeft} />
-            <TimeControl reset={handleReset} />
+            <Timer timeLeft={timeLeft} minutes={minutes} />
+            <TimeControl
+              reset={handleReset}
+              timerOn={timerOn}
+              // handleStartStop={handleStartStop}
+              handleTimer={handleTimer}
+            />
             <audio
               id="beep"
               preload="auto"

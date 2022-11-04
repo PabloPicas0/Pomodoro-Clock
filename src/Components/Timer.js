@@ -19,7 +19,9 @@ const Timer = (props) => {
         Session
       </Typography>
       <Typography id="time-left" variant="h3" align="center">
-        {props.timeLeft}
+        {props.minutes < 10 ? "0" + props.minutes : props.minutes}
+        :
+        {props.timeLeft < 10 ? "0" + props.timeLeft : props.timeLeft}
       </Typography>
     </Box>
   );
