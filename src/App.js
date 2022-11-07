@@ -80,26 +80,39 @@ function App() {
 
     //update the count down every 1 sec
 
-    let counter = setInterval(() => {
-      //get today date
-      let now = new Date().getTime()
+    if(!timerOn) {
+      let counter = setInterval(() => {
+        //get today date
+        let now = new Date().getTime()
+  
+        //find distance between future date and now
+        let distance = countDownDate - now
+  
+        //time calculations for min and sec
+        let min = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
+        let sec = Math.floor((distance % (1000 * 60)) / 1000)
+  
+        setMinutes(min)
+        setTimeLeft(sec)
+  
+        if(distance <= 0) {
+          const playMusic = document.getElementById("beep")
+          clearInterval(counter)
+          playMusic.play()
+          setMinutes(breakLength)
+          setTimeLeft(0)
+          console.log("beeep", minutes, timeLeft)
+        }
+        console.log(min, sec)
+      }, 1000);
+      localStorage.clear()
+      localStorage.setItem("counter-id", counter)
+    }
 
-      //find distance between future date and now
-      let distance = countDownDate - now
-
-      //time calculations for min and sec
-      let min = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
-      let sec = Math.floor((distance % (1000 * 60)) / 1000)
-
-      setMinutes(min)
-      setTimeLeft(sec)
-
-      if(distance <= 0) {
-        clearInterval(counter)
-        console.log("beeep")
-      }
-      console.log(min, sec)
-    }, 1000);
+    if(timerOn) {
+      clearInterval(localStorage.getItem("counter-id"))
+    }
+    setTimerOn(!timerOn)
   };
 
   return (
