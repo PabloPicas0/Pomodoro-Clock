@@ -24,7 +24,7 @@ function App() {
   const [sessionLength, setSessionLength] = useState(25 * 60);
   const [timeLeft, setTimeLeft] = useState(25 * 60);
   const [timerOn, setTimerOn] = useState(false);
-  const [switchString, setSwitchString] = useState(false);
+  const [switchBreak, setSwitchBreak] = useState(false);
 
   const converter = (time) => {
     let minutes = Math.floor(time / 60);
@@ -38,10 +38,14 @@ function App() {
   };
 
   const handleReset = () => {
+    const stop = document.getElementById("beep")
     setBreakLength(5 * 60);
     setSessionLength(25 * 60);
     setTimeLeft(25 * 60);
-    clearInterval(interval)
+    setSwitchBreak(false)
+    clearInterval(interval);
+    stop.pause()
+    stop.currentTime = 0
   };
 
   const handleTimeLength = (amount, type) => {
@@ -63,16 +67,24 @@ function App() {
   };
 
   const handleTime = () => {
+    const audio = document.getElementById("beep");
+    let onBreak = switchBreak;
+
     if (!timerOn) {
       interval = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
-
-        if (timeLeft <= 0) {
-          const audio = document.getElementById("beep");
-          clearInterval(interval);
-          audio.play();
-          setSwitchString(!switchString)
-        }
+        setTimeLeft((prev) => {
+          if (prev <= 0 && !onBreak) {
+            audio.play();
+            setSwitchBreak(true);
+            return breakLength;
+          }
+          if (prev <= 0 && onBreak) {
+            audio.play()
+            setSwitchBreak(false)
+            return sessionLength
+          }
+          return prev - 1;
+        });
       }, 1000);
     }
 
@@ -104,7 +116,7 @@ function App() {
             />
             <Timer
               timeLeft={timeLeft}
-              switchString={switchString}
+              switchBreak={switchBreak}
               converter={converter}
             />
             <TimeControl
