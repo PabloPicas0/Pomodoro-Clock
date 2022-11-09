@@ -16,12 +16,10 @@ const Timer = (props) => {
         marginY: "5px",
       }}>
       <Typography id="timer-label" variant="h4" align="center">
-        Session
+        {props.switchString ? "Break" : "Session"}
       </Typography>
       <Typography id="time-left" variant="h3" align="center">
-        {props.minutes < 10 ? "0" + props.minutes : props.minutes}
-        :
-        {props.timeLeft < 10 ? "0" + props.timeLeft : props.timeLeft}
+        {props.converter(props.timeLeft)}
       </Typography>
     </Box>
   );

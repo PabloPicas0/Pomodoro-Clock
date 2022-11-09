@@ -21,16 +21,18 @@ const Inputs = (props) => {
           <Button
             id="break-increment"
             sx={{ borderRadius: "50%", fontSize: "1.1rem" }}
-            onClick={props.handleBreakIncrement}>
+            onClick={() => props.handleTimeLength(60, "Break")}>
             <FontAwesomeIcon icon={faArrowUp} />
           </Button>
 
-          <span id="break-length">{props.breakLength}</span>
+          <span id="break-length">
+            {parseInt(props.converter(props.breakLength))}
+          </span>
 
           <Button
             id="break-decrement"
             sx={{ borderRadius: "50%", fontSize: "1.1rem" }}
-            onClick={props.handleBreakDecrement}>
+            onClick={() => props.handleTimeLength(-60, "Break")}>
             <FontAwesomeIcon icon={faArrowDown} />
           </Button>
         </Box>
@@ -49,16 +51,18 @@ const Inputs = (props) => {
           <Button
             id="session-increment"
             sx={{ borderRadius: "50%", fontSize: "1.1rem" }}
-            onClick={props.handleSessionIncrement}>
+            onClick={() => props.handleTimeLength(60, "Session")}>
             <FontAwesomeIcon icon={faArrowUp} />
           </Button>
 
-          <span id="session-length">{props.sessionLength}</span>
+          <span id="session-length">
+            {parseInt(props.converter(props.sessionLength))}
+          </span>
 
           <Button
             id="session-decrement"
             sx={{ borderRadius: "50%", fontSize: "1.1rem" }}
-            onClick={props.handleSessionDecrement}>
+            onClick={() => props.handleTimeLength(-60, "Session")}>
             <FontAwesomeIcon icon={faArrowDown} />
           </Button>
         </Box>

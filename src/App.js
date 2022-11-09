@@ -17,102 +17,70 @@ const darkTheme = createTheme({
   },
 });
 
+let interval;
+
 function App() {
-  const [breakLength, setBreakLength] = useState(5);
-  const [sessionLength, setSessionLength] = useState(25);
-  const [minutes, setMinutes] = useState(25);
-  const [timeLeft, setTimeLeft] = useState(0);
+  const [breakLength, setBreakLength] = useState(5 * 60);
+  const [sessionLength, setSessionLength] = useState(25 * 60);
+  const [timeLeft, setTimeLeft] = useState(25 * 60);
   const [timerOn, setTimerOn] = useState(false);
+  const [switchString, setSwitchString] = useState(false);
+
+  const converter = (time) => {
+    let minutes = Math.floor(time / 60);
+    let seconds = time % 60;
+
+    return (
+      (minutes < 10 ? "0" + minutes : minutes) +
+      ":" +
+      (seconds < 10 ? "0" + seconds : seconds)
+    );
+  };
 
   const handleReset = () => {
-    const audio = document.getElementById("beep");
-    setBreakLength(5);
-    setSessionLength(25);
-    setMinutes(25);
-    setTimeLeft(0);
-    audio.pause();
+    setBreakLength(5 * 60);
+    setSessionLength(25 * 60);
+    setTimeLeft(25 * 60);
+    clearInterval(interval)
   };
 
-  const handleBreakIncrement = () => {
-    if (breakLength >= 60) {
-      return;
+  const handleTimeLength = (amount, type) => {
+    if (type === "Break") {
+      if ((breakLength <= 60 && amount < 0) || breakLength >= 3600) {
+        return;
+      }
+      setBreakLength((prev) => prev + amount);
+    } else {
+      if ((sessionLength <= 60 && amount < 0) || sessionLength >= 3600) {
+        return;
+      }
+      setSessionLength((prev) => prev + amount);
     }
-    setBreakLength((prev) => prev + 1);
-  };
 
-  const handleBreakDecrement = () => {
-    if (breakLength <= 1) {
-      return;
+    if (!timerOn && type !== "Break") {
+      setTimeLeft(sessionLength + amount);
     }
-    setBreakLength((prev) => prev - 1);
   };
 
-  const handleSessionIncrement = () => {
-    if (sessionLength >= 60) {
-      return;
-    }
-    setSessionLength((prev) => {
-      setMinutes(prev + 1);
-      return prev + 1;
-    });
-  };
+  const handleTime = () => {
+    if (!timerOn) {
+      interval = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
 
-  const handleSessionDecrement = () => {
-    if (sessionLength <= 1) {
-      return;
-    }
-    setSessionLength((prev) => {
-      setMinutes(prev - 1);
-      return prev - 1;
-    });
-  };
-
-  // const handleStartStop = () => {
-  //   setTimerOn(!timerOn);
-  // };
-
-  const handleTimer = () => {
-    let oldDate = new Date()
-    let countDownDate = new Date()
-
-    //set the date we're counting to 
-    countDownDate.setTime(oldDate.getTime() + (minutes * 60 * 1000 + 1000))
-
-    //update the count down every 1 sec
-
-    if(!timerOn) {
-      let counter = setInterval(() => {
-        //get today date
-        let now = new Date().getTime()
-  
-        //find distance between future date and now
-        let distance = countDownDate - now
-  
-        //time calculations for min and sec
-        let min = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
-        let sec = Math.floor((distance % (1000 * 60)) / 1000)
-  
-        setMinutes(min)
-        setTimeLeft(sec)
-  
-        if(distance <= 0) {
-          const playMusic = document.getElementById("beep")
-          clearInterval(counter)
-          playMusic.play()
-          setMinutes(breakLength)
-          setTimeLeft(0)
-          console.log("beeep", minutes, timeLeft)
+        if (timeLeft <= 0) {
+          const audio = document.getElementById("beep");
+          clearInterval(interval);
+          audio.play();
+          setSwitchString(!switchString)
         }
-        console.log(min, sec)
       }, 1000);
-      localStorage.clear()
-      localStorage.setItem("counter-id", counter)
     }
 
-    if(timerOn) {
-      clearInterval(localStorage.getItem("counter-id"))
+    if (timerOn) {
+      clearInterval(interval);
     }
-    setTimerOn(!timerOn)
+
+    setTimerOn(!timerOn);
   };
 
   return (
@@ -131,17 +99,18 @@ function App() {
             <Inputs
               breakLength={breakLength}
               sessionLength={sessionLength}
-              handleBreakIncrement={handleBreakIncrement}
-              handleBreakDecrement={handleBreakDecrement}
-              handleSessionIncrement={handleSessionIncrement}
-              handleSessionDecrement={handleSessionDecrement}
+              handleTimeLength={handleTimeLength}
+              converter={converter}
             />
-            <Timer timeLeft={timeLeft} minutes={minutes} />
+            <Timer
+              timeLeft={timeLeft}
+              switchString={switchString}
+              converter={converter}
+            />
             <TimeControl
-              reset={handleReset}
               timerOn={timerOn}
-              // handleStartStop={handleStartStop}
-              handleTimer={handleTimer}
+              handleTimer={handleTime}
+              reset={handleReset}
             />
             <audio
               id="beep"
