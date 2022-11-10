@@ -11,9 +11,7 @@ const TimeControl = (props) => {
       <Button
         id="start_stop"
         sx={{ borderRadius: "50%" }}
-        onClick={() => {
-          props.handleTimer()
-        }}>
+        onClick={props.handleTime}>
         <FontAwesomeIcon icon={props.timerOn ? faPause : faPlay} />
       </Button>
 

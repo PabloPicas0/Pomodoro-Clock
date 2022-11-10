@@ -1,6 +1,6 @@
 import "./App.css";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Title from "./Components/Title";
 import Inputs from "./Components/inputs";
@@ -17,14 +17,27 @@ const darkTheme = createTheme({
   },
 });
 
-let interval;
-
 function App() {
-  const [breakLength, setBreakLength] = useState(5 * 60);
-  const [sessionLength, setSessionLength] = useState(25 * 60);
-  const [timeLeft, setTimeLeft] = useState(25 * 60);
+  const [breakLength, setBreakLength] = useState(3);
+  const [sessionLength, setSessionLength] = useState(5);
+  const [timeLeft, setTimeLeft] = useState(5);
   const [timerOn, setTimerOn] = useState(false);
   const [switchBreak, setSwitchBreak] = useState(false);
+
+  useEffect(() => {
+    const audio = document.getElementById("beep")
+    
+    if (timeLeft <= 0 && !switchBreak) {
+      audio.play();
+      setSwitchBreak(true);
+      setTimeLeft(breakLength);
+    }
+    if (timeLeft <= 0 && switchBreak) {
+      audio.play();
+      setSwitchBreak(false);
+      setTimeLeft(sessionLength);
+    }
+  }, [timeLeft])
 
   const converter = (time) => {
     let minutes = Math.floor(time / 60);
@@ -38,14 +51,13 @@ function App() {
   };
 
   const handleReset = () => {
-    const stop = document.getElementById("beep")
+    const stop = document.getElementById("beep");
     setBreakLength(5 * 60);
     setSessionLength(25 * 60);
     setTimeLeft(25 * 60);
-    setSwitchBreak(false)
-    clearInterval(interval);
-    stop.pause()
-    stop.currentTime = 0
+    setSwitchBreak(false);
+    stop.pause();
+    stop.currentTime = 0;
   };
 
   const handleTimeLength = (amount, type) => {
@@ -59,37 +71,31 @@ function App() {
         return;
       }
       setSessionLength((prev) => prev + amount);
-    }
-
-    if (!timerOn && type !== "Break") {
-      setTimeLeft(sessionLength + amount);
+      if (!timerOn) {
+        setTimeLeft(sessionLength + amount);
+      }
     }
   };
 
   const handleTime = () => {
-    const audio = document.getElementById("beep");
-    let onBreak = switchBreak;
+    let seconds = 1000;
+    let date = new Date().getTime();
+    let futureDate = new Date().getTime() + seconds;
 
     if (!timerOn) {
-      interval = setInterval(() => {
-        setTimeLeft((prev) => {
-          if (prev <= 0 && !onBreak) {
-            audio.play();
-            setSwitchBreak(true);
-            return breakLength;
-          }
-          if (prev <= 0 && onBreak) {
-            audio.play()
-            setSwitchBreak(false)
-            return sessionLength
-          }
-          return prev - 1;
-        });
-      }, 1000);
+      let interval = setInterval(() => {
+        date = new Date().getTime();
+        if (date > futureDate) {
+          setTimeLeft((prev) => prev - 1);
+          futureDate += seconds;
+        }
+      }, 100);
+      localStorage.clear()
+      localStorage.setItem("interval-id", interval)
     }
 
     if (timerOn) {
-      clearInterval(interval);
+      clearInterval(localStorage.getItem("interval-id"));
     }
 
     setTimerOn(!timerOn);
@@ -121,7 +127,7 @@ function App() {
             />
             <TimeControl
               timerOn={timerOn}
-              handleTimer={handleTime}
+              handleTime={handleTime}
               reset={handleReset}
             />
             <audio

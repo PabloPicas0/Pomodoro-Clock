@@ -26,7 +26,7 @@ const Inputs = (props) => {
           </Button>
 
           <span id="break-length">
-            {parseInt(props.converter(props.breakLength))}
+            {props.converter(props.breakLength)}
           </span>
 
           <Button
@@ -56,7 +56,7 @@ const Inputs = (props) => {
           </Button>
 
           <span id="session-length">
-            {parseInt(props.converter(props.sessionLength))}
+            {props.converter(props.sessionLength)}
           </span>
 
           <Button
