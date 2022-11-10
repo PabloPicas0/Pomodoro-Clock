@@ -18,15 +18,15 @@ const darkTheme = createTheme({
 });
 
 function App() {
-  const [breakLength, setBreakLength] = useState(3);
-  const [sessionLength, setSessionLength] = useState(5);
-  const [timeLeft, setTimeLeft] = useState(5);
+  const [breakLength, setBreakLength] = useState(5 * 60);
+  const [sessionLength, setSessionLength] = useState(25 * 60);
+  const [timeLeft, setTimeLeft] = useState(25 * 60);
   const [timerOn, setTimerOn] = useState(false);
   const [switchBreak, setSwitchBreak] = useState(false);
 
   useEffect(() => {
     const audio = document.getElementById("beep")
-    
+
     if (timeLeft <= 0 && !switchBreak) {
       audio.play();
       setSwitchBreak(true);
