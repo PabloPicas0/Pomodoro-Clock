@@ -37,7 +37,13 @@ function App() {
       setSwitchBreak(false);
       setTimeLeft(sessionLength);
     }
-  }, [timeLeft])
+
+    if(sessionLength < 0) {
+      setSessionLength(60)
+      setTimeLeft(60)
+    }
+    console.log(timeLeft, switchBreak)
+  }, [timeLeft, sessionLength])
 
   const converter = (time) => {
     let minutes = Math.floor(time / 60);
@@ -55,7 +61,9 @@ function App() {
     setBreakLength(5 * 60);
     setSessionLength(25 * 60);
     setTimeLeft(25 * 60);
+    setTimerOn(false)
     setSwitchBreak(false);
+    clearInterval(localStorage.getItem("interval-id"))
     stop.pause();
     stop.currentTime = 0;
   };
@@ -67,7 +75,7 @@ function App() {
       }
       setBreakLength((prev) => prev + amount);
     } else {
-      if ((sessionLength <= 60 && amount < 0) || sessionLength >= 3600) {
+      if ((sessionLength <= 60 && amount <= 0) || sessionLength >= 3600) {
         return;
       }
       setSessionLength((prev) => prev + amount);
@@ -84,12 +92,8 @@ function App() {
 
     if (!timerOn) {
       let interval = setInterval(() => {
-        date = new Date().getTime();
-        if (date > futureDate) {
           setTimeLeft((prev) => prev - 1);
-          futureDate += seconds;
-        }
-      }, 100);
+      }, 1000);
       localStorage.clear()
       localStorage.setItem("interval-id", interval)
     }
