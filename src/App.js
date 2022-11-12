@@ -113,7 +113,7 @@ function App() {
         <Title />
 
         <ThemeProvider theme={darkTheme}>
-          <Paper elevation={8}>
+          <Paper elevation={8} sx={{padding: "15px 10px 10px 10px"}}>
             <Inputs
               breakLength={breakLength}
               sessionLength={sessionLength}

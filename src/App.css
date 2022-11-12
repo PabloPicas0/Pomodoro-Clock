@@ -11,10 +11,6 @@ p {
   color: #bdbdbd;
 }
 
-.css-2cevn4-MuiPaper-root {
-  padding: 15px 10px 10px 10px;
-}
-
 @media (max-width: 920px) {
   .css-102lqhp {
     flex-direction: column;
