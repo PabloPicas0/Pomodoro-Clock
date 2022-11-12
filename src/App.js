@@ -86,10 +86,6 @@ function App() {
   };
 
   const handleTime = () => {
-    let seconds = 1000;
-    let date = new Date().getTime();
-    let futureDate = new Date().getTime() + seconds;
-
     if (!timerOn) {
       let interval = setInterval(() => {
           setTimeLeft((prev) => prev - 1);
